@@ -6,6 +6,12 @@ var app = (function () {
             this.y=y;
         }        
     }
+
+    class Polygon{
+        constructor(points){
+            this.points = points;
+        }
+    }
     
     var stompClient = null;
 
@@ -15,6 +21,21 @@ var app = (function () {
         ctx.beginPath();
         ctx.arc(point.x, point.y, 1, 0, 2 * Math.PI);
         ctx.stroke();
+    };
+
+    var addPolygonToCanvas = function(Polygon){
+      var canv = document.getElementById("canvas");
+      var canvasctx = canv.getContext('2d');
+      c2.fillStyle = '#f00';
+      c2.beginPath();
+      for(var i=0;i<Polygon.points.){
+      }
+      c2.moveTo(0, 0);
+      c2.lineTo(100,50);
+      c2.lineTo(50, 100);
+      c2.lineTo(0, 90);
+      c2.closePath();
+      c2.fill();
     };
     
     
@@ -57,6 +78,23 @@ var app = (function () {
                 var extract = JSON.parse(eventbody.body);
                 var pnt = new Point(extract.x,extract.y);
                 addPointToCanvas(pnt);
+            });
+            stompClient.subscribe('/topic/newpolygon'+id, function(eventbody){
+                var extract2 = JSON.parse(eventbody.body);
+                var poly = new Polygon(extract2.points);
+                var canv = document.getElementById("canvas");
+                var canvasctx = canv.getContext('2d');
+                canvasctx.fillStyle = '#f00';
+                canvasctx.beginPath();
+                for(var i=0;i<poly.points.length;i++){
+                    if(i===0){
+                        canvasctx.moveTo(points[i].x, points[i].y);
+                    }else{
+                        canvasctx.lineTo(points[i].x, points[i].y);
+                    }
+                }
+                c2.closePath();
+                c2.fill();
             });
         });
     };
